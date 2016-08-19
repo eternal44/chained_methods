@@ -54,25 +54,61 @@ Drone.prototype.land = function land(callback) {
 // START ADD YOUR CODE HERE
 
 
+// Object.keys(Drone.prototype).forEach(function(el) {
+//   Object.defineProperty(Drone, el, {
+//     get: function() {
+//       return this
+//     }
+//   })
+// })
 
+
+Drone.actionQueue = []
+
+function wrap (obj) {
+  // wrap functions in functions and use async lib to handle it
+  Object.keys(obj).forEach(function(element) {
+    var temp = obj[element]
+    obj[element] = function hook () {
+      var args = [].slice.call(arguments)
+      if(args.length == 0) {
+        args.push(function() {})
+
+        temp.apply(obj, args)
+        return this
+      }
+    }
+  })
+}
+
+
+// function wrap (obj) {
+//   // wrap functions in functions and use async lib to handle it
+//   Object.keys(obj).forEach(function(element) {
+//     var temp = obj[element]
+//     obj[element] = function hook () {
+//       console.log('***', obj.constructor.actionQueue)
+//       return this
+//     }
+//   })
+// }
+
+wrap(Drone.prototype)
 
 
 var drone = new Drone();
 
+// // END ADD YOUR CODE HERE
 
-
-
-
-// END ADD YOUR CODE HERE
-
-//DONT MODIFY ANYTHING BELOW HERE
-console.log("Expected Output:")
-console.log("Took off");
-console.log("Camera turned on");
-console.log("Gimbal pointing down");
-console.log("Flown to mission");
-console.log("Photo taken");
-console.log("Landed");
+// //DONT MODIFY ANYTHING BELOW HERE
+// console.log("Expected Output:")
+// console.log("Took off");
+// console.log("Camera turned on");
+// console.log("Gimbal pointing down");
+// console.log("Flown to mission");
+// console.log("Photo taken");
+// console.log("Landed");
 
 console.log("\n\nActual Output:")
+// drone.takeoff()
 drone.takeoff().turnOnCamera().pointDownGimbal().flyToMission().takePhoto().land();
