@@ -62,6 +62,7 @@ Drone.prototype.land = function land(callback) {
 //   })
 // })
 
+var series = require('async/series')
 
 var actionQueue = []
 
@@ -76,9 +77,10 @@ function wrap (obj) {
           temp
         })
 
-        var currentTask = actionQueue.shift()
-        if(currentTask){
-          currentTask.apply(obj, args)
+
+        if(actionQueue.length){
+          series(actionQueue, function(err, results) {
+          })
         }
 
         actionQueue.push(temp)
