@@ -63,7 +63,7 @@ Drone.prototype.land = function land(callback) {
 // })
 
 
-Drone.actionQueue = []
+var actionQueue = []
 
 function wrap (obj) {
   // wrap functions in functions and use async lib to handle it
@@ -72,9 +72,16 @@ function wrap (obj) {
     obj[element] = function hook () {
       var args = [].slice.call(arguments)
       if(args.length == 0) {
-        args.push(function() {})
+        args.push(function() {
+          temp
+        })
 
-        temp.apply(obj, args)
+        var currentTask = actionQueue.shift()
+        if(currentTask){
+          currentTask.apply(obj, args)
+        }
+
+        actionQueue.push(temp)
         return this
       }
     }
@@ -112,3 +119,4 @@ var drone = new Drone();
 console.log("\n\nActual Output:")
 // drone.takeoff()
 drone.takeoff().turnOnCamera().pointDownGimbal().flyToMission().takePhoto().land();
+// drone.takeoff(function(){console.log('hi')}).turnOnCamera().pointDownGimbal().flyToMission().takePhoto().land();
