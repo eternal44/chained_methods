@@ -53,30 +53,18 @@ Drone.prototype.land = function land(callback) {
 
 // START ADD YOUR CODE HERE
 
-
-// Object.keys(Drone.prototype).forEach(function(el) {
-//   Object.defineProperty(Drone, el, {
-//     get: function() {
-//       return this
-//     }
-//   })
-// })
-
 var series = require('async/series')
 
 var actionQueue = []
 
 function wrap (obj) {
-  // wrap functions in functions and use async lib to handle it
   Object.keys(obj).forEach(function(element) {
     var temp = obj[element]
     obj[element] = function hook () {
       var args = [].slice.call(arguments)
       if(args.length == 0) {
-        args.push(function() {
-          temp
-        })
 
+        args.push(function() {})
 
         if(actionQueue.length){
           series(actionQueue, function(err, results) {
@@ -84,39 +72,26 @@ function wrap (obj) {
         }
 
         actionQueue.push(temp)
+
         return this
       }
     }
   })
 }
 
-
-// function wrap (obj) {
-//   // wrap functions in functions and use async lib to handle it
-//   Object.keys(obj).forEach(function(element) {
-//     var temp = obj[element]
-//     obj[element] = function hook () {
-//       console.log('***', obj.constructor.actionQueue)
-//       return this
-//     }
-//   })
-// }
-
 wrap(Drone.prototype)
-
-
 var drone = new Drone();
 
 // // END ADD YOUR CODE HERE
 
-// //DONT MODIFY ANYTHING BELOW HERE
-// console.log("Expected Output:")
-// console.log("Took off");
-// console.log("Camera turned on");
-// console.log("Gimbal pointing down");
-// console.log("Flown to mission");
-// console.log("Photo taken");
-// console.log("Landed");
+//DONT MODIFY ANYTHING BELOW HERE
+console.log("Expected Output:")
+console.log("Took off");
+console.log("Camera turned on");
+console.log("Gimbal pointing down");
+console.log("Flown to mission");
+console.log("Photo taken");
+console.log("Landed");
 
 console.log("\n\nActual Output:")
 // drone.takeoff()
