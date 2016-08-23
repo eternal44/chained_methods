@@ -60,18 +60,19 @@ var actionQueue = []
 function wrap (obj) {
   Object.keys(obj).forEach(function(element) {
     var temp = obj[element]
+
     obj[element] = function hook () {
       var args = [].slice.call(arguments)
       if(args.length == 0) {
 
-        args.push(function() {})
+        actionQueue.push(temp)
 
-        if(actionQueue.length){
+        if(element === 'land'){
           series(actionQueue, function(err, results) {
+            if(err)
+              console.error(err)
           })
         }
-
-        actionQueue.push(temp)
 
         return this
       }
