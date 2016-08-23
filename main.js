@@ -55,34 +55,33 @@ Drone.prototype.land = function land(callback) {
 
 var series = require('async/series')
 
-var actionQueue = []
+Drone.actionQueue = []
 
 function wrap (obj) {
+  var actionQueue = obj.constructor.actionQueue
+
   Object.keys(obj).forEach(function(element) {
     var temp = obj[element]
 
     obj[element] = function hook () {
       var args = [].slice.call(arguments)
-      if(args.length == 0) {
 
-        actionQueue.push(temp)
+      actionQueue.push(temp)
 
-        if(element === 'land'){
-          series(actionQueue, function(err, results) {
-            if(err)
-              console.error(err)
-          })
-        }
-
-        return this
+      if(element === 'land'){
+        series(actionQueue, function(err, results) {
+          if(err)
+            console.error(err)
+        })
       }
+
+      return this
     }
   })
 }
 
 wrap(Drone.prototype)
 var drone = new Drone();
-
 // // END ADD YOUR CODE HERE
 
 //DONT MODIFY ANYTHING BELOW HERE
@@ -95,6 +94,4 @@ console.log("Photo taken");
 console.log("Landed");
 
 console.log("\n\nActual Output:")
-// drone.takeoff()
 drone.takeoff().turnOnCamera().pointDownGimbal().flyToMission().takePhoto().land();
-// drone.takeoff(function(){console.log('hi')}).turnOnCamera().pointDownGimbal().flyToMission().takePhoto().land();
