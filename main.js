@@ -53,35 +53,32 @@ Drone.prototype.land = function land(callback) {
 
 // START ADD YOUR CODE HERE
 
-var series = require('async/series')
+var queue = require('async/queue')
 
-Drone.actionQueue = []
-
-function wrap (obj) {
-  var actionQueue = obj.constructor.actionQueue
+function wrap(obj) {
+  // a queue all methods can access
+  var q = queue(function(task, callback) {
+    task(callback)
+  })
 
   Object.keys(obj).forEach(function(element) {
     var temp = obj[element]
 
+    // wraps each method in a function so it doesn't execute when initially called in the chain
     obj[element] = function hook () {
-      var args = [].slice.call(arguments)
-
-      actionQueue.push(temp)
-
-      if(element === 'land'){
-        series(actionQueue, function(err, results) {
-          if(err)
-            console.error(err)
-        })
-      }
-
+      // queues the method the order it was called and executes it
+      q.push(temp)
       return this
     }
   })
 }
 
+
+
 wrap(Drone.prototype)
+
 var drone = new Drone();
+
 // // END ADD YOUR CODE HERE
 
 //DONT MODIFY ANYTHING BELOW HERE
